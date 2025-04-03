@@ -15,6 +15,9 @@ export default function SearchBar({
 
   useEffect(() => {
     setSearchQuery(selectedTag || "");
+    if (selectedTag != null) {
+      onSearchChange(selectedTag);
+    }
   }, [selectedTag]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

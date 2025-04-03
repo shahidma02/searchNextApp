@@ -12,7 +12,6 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // If no searchQuery and no selectedTag, show no results
         if (!searchQuery && !selectedTag) {
           setLangs([]);
           return;
@@ -35,10 +34,10 @@ export default function Home() {
         const text = await response.text();
         const data = text ? JSON.parse(text) : [];
 
-        setLangs(data); // Update languages list with the fetched data
+        setLangs(data);
       } catch (error) {
         console.error("Error fetching data: ", error);
-        setLangs([]); // In case of error, set langs to empty array
+        setLangs([]);
       }
     };
 
@@ -47,6 +46,9 @@ export default function Home() {
 
   const handleTagSelect = (tag: string) => {
     setSelectedTag((prevTag) => (prevTag === tag ? null : tag));
+    if (selectedTag !== null) {
+      handleSearchChange(selectedTag);
+    }
   };
 
   const handleSearchChange = (query: string) => {
