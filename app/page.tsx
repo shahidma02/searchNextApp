@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import SearchBar from "./components/search_bar";
 import Tab from "./components/tab";
 import Result from "./components/result";
@@ -7,6 +7,7 @@ import Loading from "./loading";
 import Message from "./components/message";
 
 export default function Home() {
+  const controllerRef = useRef<AbortController | null>(null);
   const [langs, setLangs] = useState<any>(null);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string | null>("");
@@ -15,7 +16,7 @@ export default function Home() {
 
   useEffect(() => {
     console.log("in useEffect");
-    setLangs([]);
+
     const fetchData = async () => {
       try {
         if (!searchQuery && !selectedTag) {
@@ -28,17 +29,28 @@ export default function Home() {
         const queryParams = new URLSearchParams();
         queryParams.append("no-throttling", "true");
 
+        // Abort previous request if it exists
+        if (controllerRef.current) {
+          controllerRef.current.abort();
+        }
+
+        // Create a new AbortController
+        controllerRef.current = new AbortController();
+        const signal = controllerRef.current.signal;
+
         if (searchQuery) queryParams.append("search", searchQuery);
         if (selectedTag) queryParams.append("tag", selectedTag);
+
         console.log("query", searchQuery);
         console.log("tag", selectedTag);
         console.log("hi", queryParams);
+
         const response = await fetch(
-          `https://frontend-test-api.digitalcreative.cn/?${queryParams.toString()}`
+          `https://frontend-test-api.digitalcreative.cn/?${queryParams.toString()}`,
+          { signal } // ✅ Attach signal here
         );
 
         if (!response.ok) {
-          // console.error("HTTP error! status: ", response.status);
           setError(`HTTP error! Status: ${response.status}`);
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -49,18 +61,22 @@ export default function Home() {
         setLangs(data);
       } catch (err: any) {
         if (err.name === "AbortError") {
-          setError("Request timed out. Please try again.");
-        } else {
-          setError("Something went wrong. Please try again later.");
+          console.log("Fetch aborted, no need to update state.");
+          return;
         }
+        setError("Something went wrong. Please try again later.");
         setLangs([]);
-        // console.error("Error fetching data: ", err);
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
+    return () => {
+      if (controllerRef.current) {
+        controllerRef.current.abort();
+      }
+    };
   }, [searchQuery, selectedTag]);
 
   const handleTagSelect = (tag: string) => {
@@ -133,16 +149,16 @@ export default function Home() {
 
         <div className="sm:w-[690px] sm:h-[51px] w-[345px] h[51px]  bg-white border-[1rem] border-transparent rounded-b-[20px] shadow-[4px_4px_10px_rgba(0,0,0,0.2)] m-0 flex justify-center">
           <p className="text-[#999FAA] font-[500] text-[16px] w-[642px]">
-            {langs && langs.length > 0 ? (
-              `${langs.length} results`
-            ) : loading ? (
+            {loading ? (
               "Searching ..."
             ) : error ? (
               <span className="text-[#ed2e7e]">
                 Something wrong happened but this is not your fault :)
               </span>
-            ) : (
+            ) : langs.length === 0 ? (
               "No results"
+            ) : (
+              `${langs.length} results`
             )}
           </p>
         </div>
