@@ -155,10 +155,10 @@ export default function Home() {
               <span className="text-[#ed2e7e]">
                 Something wrong happened but this is not your fault :)
               </span>
-            ) : langs.length === 0 ? (
-              "No results"
-            ) : (
+            ) : Array.isArray(langs) && langs.length > 0 ? (
               `${langs.length} results`
+            ) : (
+              "No results"
             )}
           </p>
         </div>
