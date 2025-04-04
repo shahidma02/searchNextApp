@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import Link from "next/link";
 import { FaSquareArrowUpRight } from "react-icons/fa6";
 
 export default function Result({
@@ -19,7 +20,7 @@ export default function Result({
           alt="Remote Image"
           width={76}
           height={76}
-          className="rounded-[10px] sm:w-[76px] sm:h-[76px] w-[50px] h-[50px]"
+          className="rounded-[10px]"
         />
       </div>
       <div className="w-[200px] h-[50px] sm:w-[468px] sm:h-[76px] flex flex-col justify-center">
@@ -29,8 +30,10 @@ export default function Result({
         </p>
       </div>
 
-      <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-        <FaSquareArrowUpRight className="text-[26px] text-[#e0e3e8]" />
+      <div className="flex items-center sm:opacity-0 sm:group-hover:opacity-100 sm:transition-opacity sm:duration-200">
+        <Link href="/details">
+          <FaSquareArrowUpRight className="text-[26px] text-[#e0e3e8] opacity-100" />
+        </Link>
       </div>
     </div>
   );

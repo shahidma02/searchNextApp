@@ -22,6 +22,12 @@ export default function Tab({
         isSelected ? "bg-[var(--color-appPurple)]" : "bg-[#f2f4f8]"
       } h-[32] rounded-[20px] flex justify-center items-center space-x-2 px-5 cursor-pointer`}
       onClick={toggleSelected}
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          onSelect(tag_text);
+        }
+      }}
     >
       <LuTag
         className={`${

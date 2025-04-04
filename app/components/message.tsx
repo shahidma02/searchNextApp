@@ -9,6 +9,7 @@ export default function Message({ imageURL }: { imageURL: string }) {
         width={247}
         height={213}
         className="rounded-[10px] w-[200px] h-[180] sm:w-[247px] sm:h-[213px]"
+        priority
       />
     </div>
   );

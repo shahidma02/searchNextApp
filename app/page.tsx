@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import SearchBar from "./components/search_bar";
 import Tab from "./components/tab";
 import Result from "./components/result";
-import Image from "next/image";
 import Loading from "./loading";
 import Message from "./components/message";
 
@@ -15,7 +14,8 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log("hello");
+    console.log("in useEffect");
+    setLangs([]);
     const fetchData = async () => {
       try {
         if (!searchQuery && !selectedTag) {
@@ -38,7 +38,7 @@ export default function Home() {
         );
 
         if (!response.ok) {
-          console.error("HTTP error! status: ", response.status);
+          // console.error("HTTP error! status: ", response.status);
           setError(`HTTP error! Status: ${response.status}`);
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -54,7 +54,7 @@ export default function Home() {
           setError("Something went wrong. Please try again later.");
         }
         setLangs([]);
-        console.error("Error fetching data: ", err);
+        // console.error("Error fetching data: ", err);
       } finally {
         setLoading(false);
       }
@@ -139,7 +139,7 @@ export default function Home() {
               "Searching ..."
             ) : error ? (
               <span className="text-[#ed2e7e]">
-                Something went wrong, but this isn't your fault :)
+                Something wrong happened but this is not your fault :)
               </span>
             ) : (
               "No results"

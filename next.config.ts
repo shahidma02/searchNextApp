@@ -1,8 +1,17 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // images: {
+  //   domains: ["frontend-test-api.digitalcreative.cn"],
+  // },
   images: {
-    domains: ["frontend-test-api.digitalcreative.cn"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "frontend-test-api.digitalcreative.cn",
+        pathname: "**",
+      },
+    ],
   },
 };
 
