@@ -5,6 +5,7 @@ import Tab from "./components/tab";
 import Result from "./components/result";
 import Image from "next/image";
 import Loading from "./loading";
+import Message from "./components/message";
 
 export default function Home() {
   const [langs, setLangs] = useState<any>(null);
@@ -14,8 +15,7 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // const controller = new AbortController();
-    // const timeoutId = setTimeout(() => controller.abort(), 10000);
+    console.log("hello");
     const fetchData = async () => {
       try {
         if (!searchQuery && !selectedTag) {
@@ -30,13 +30,12 @@ export default function Home() {
 
         if (searchQuery) queryParams.append("search", searchQuery);
         if (selectedTag) queryParams.append("tag", selectedTag);
-
+        console.log("query", searchQuery);
+        console.log("tag", selectedTag);
+        console.log("hi", queryParams);
         const response = await fetch(
           `https://frontend-test-api.digitalcreative.cn/?${queryParams.toString()}`
-          // { signal: controller.signal }
         );
-
-        // clearTimeout(timeoutId);
 
         if (!response.ok) {
           console.error("HTTP error! status: ", response.status);
@@ -62,10 +61,6 @@ export default function Home() {
     };
 
     fetchData();
-
-    // return () => {
-    //   clearTimeout(timeoutId);
-    // };
   }, [searchQuery, selectedTag]);
 
   const handleTagSelect = (tag: string) => {
@@ -118,19 +113,9 @@ export default function Home() {
           </div>
           <div className="overflow-y-auto max-h-full w-full">
             {loading ? (
-              <div className="h-[207] sm:h-[414px] flex justify-center items-center">
-                <Loading />
-              </div>
+              <Loading />
             ) : error ? (
-              <div className="h-[207px] sm:h-[414px] flex justify-center items-center">
-                <Image
-                  src="/error.jpg"
-                  alt="Remote Image"
-                  width={247}
-                  height={213}
-                  className="rounded-[10px] w-[200px] h-[180] sm:w-[247px] sm:h-[213px]"
-                />
-              </div>
+              <Message imageURL="/error.jpg" />
             ) : langs && langs.length > 0 ? (
               langs.map((lang: any) => (
                 <Result
@@ -141,15 +126,7 @@ export default function Home() {
                 />
               ))
             ) : (
-              <div className=" h-[207px] sm:h-[414px]  flex justify-center items-center">
-                <Image
-                  src="/no_result.jpg"
-                  alt="Remote Image"
-                  width={247}
-                  height={213}
-                  className="rounded-[10px] w-[200px] h-[180] sm:w-[247px] sm:h-[213px]"
-                />
-              </div>
+              <Message imageURL="/no_result.jpg" />
             )}
           </div>
         </div>
