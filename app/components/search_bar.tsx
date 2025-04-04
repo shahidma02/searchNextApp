@@ -36,6 +36,7 @@ export default function SearchBar({
   return (
     <div className="w-[321px] sm:w-[642px]">
       <form>
+        {/* <p>{searchQuery}</p> */}
         <div className="relative h-[60px] sm:h-[74px] ">
           <div className="absolute inset-y-0 start-0 flex text-[24px] items-center ps-3 pointer-events-none">
             <IoSearch />

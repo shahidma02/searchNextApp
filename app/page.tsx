@@ -14,8 +14,8 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    // const controller = new AbortController();
+    // const timeoutId = setTimeout(() => controller.abort(), 10000);
     const fetchData = async () => {
       try {
         if (!searchQuery && !selectedTag) {
@@ -32,11 +32,11 @@ export default function Home() {
         if (selectedTag) queryParams.append("tag", selectedTag);
 
         const response = await fetch(
-          `https://frontend-test-api.digitalcreative.cn/?${queryParams.toString()}`,
-          { signal: controller.signal }
+          `https://frontend-test-api.digitalcreative.cn/?${queryParams.toString()}`
+          // { signal: controller.signal }
         );
 
-        clearTimeout(timeoutId);
+        // clearTimeout(timeoutId);
 
         if (!response.ok) {
           console.error("HTTP error! status: ", response.status);
@@ -63,9 +63,9 @@ export default function Home() {
 
     fetchData();
 
-    return () => {
-      clearTimeout(timeoutId);
-    };
+    // return () => {
+    //   clearTimeout(timeoutId);
+    // };
   }, [searchQuery, selectedTag]);
 
   const handleTagSelect = (tag: string) => {
