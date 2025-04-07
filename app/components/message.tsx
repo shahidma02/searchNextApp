@@ -4,7 +4,7 @@ export default function Message({ imageURL }: { imageURL: string }) {
   return (
     <div className="h-[207px] sm:h-[414px] flex justify-center items-center">
       <Image
-        src="/error.jpg"
+        src={imageURL}
         alt="Remote Image"
         width={247}
         height={213}

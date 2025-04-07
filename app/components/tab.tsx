@@ -1,7 +1,12 @@
 "use client";
 
 import { LuTag } from "react-icons/lu";
-import { useState } from "react";
+import { Poppins } from "next/font/google";
+
+const popins = Poppins({
+  subsets: ["latin"],
+  weight: "500",
+});
 
 export default function Tab({
   tag_text,
@@ -20,7 +25,7 @@ export default function Tab({
     <div
       className={`${
         isSelected ? "bg-[var(--color-appPurple)]" : "bg-[#f2f4f8]"
-      } h-[32] rounded-[20px] flex justify-center items-center space-x-2 px-5 cursor-pointer`}
+      } group h-[32] rounded-[20px] flex justify-center items-center cursor-pointer hover:bg-[#7c52f9] px-[16px]`}
       onClick={toggleSelected}
       tabIndex={0}
       onKeyDown={(e) => {
@@ -32,12 +37,14 @@ export default function Tab({
       <LuTag
         className={`${
           isSelected ? "text-white" : "text-[var(--color-appPurple)]"
-        }`}
+        } group-hover:text-gray-200 pr-[8px] text-[20px]`}
       />
       <p
         className={`${
           isSelected ? "text-white" : "text-[var(--color-appPurple)]"
-        } text-[14px] font-[500]`}
+        } text-[14px] ${
+          popins.className
+        } group-hover:text-gray-200 py-[7px] leading-[18px]`}
       >
         {tag_text}
       </p>
