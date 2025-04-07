@@ -13,87 +13,74 @@ const popins = Poppins({
 });
 
 export default function Home() {
-  const controllerRef = useRef<AbortController | null>(null);
-  const [langs, setLangs] = useState<any>(null);
-  const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [results, setResults] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState<string | null>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
+  const fetchData = async (signal: AbortSignal) => {
+    try {
+      if (!searchQuery) {
+        setResults([]);
+        return;
+      }
+
+      setError(null);
+      setLoading(true);
+
+      const queryParams = new URLSearchParams();
+      queryParams.append("no-throttling", "true");
+
+      if (searchQuery) queryParams.append("search", searchQuery);
+
+      console.log("query", searchQuery);
+      console.log("hi", queryParams);
+
+      const response = await fetch(
+        `https://frontend-test-api.digitalcreative.cn/?${queryParams.toString()}`,
+        { signal }
+      );
+
+      if (!response.ok) {
+        setError(`HTTP error! Status: ${response.status}`);
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const text = await response.text();
+      const data = text ? JSON.parse(text) : [];
+
+      setResults(data);
+    } catch (err: any) {
+      if (err.name === "AbortError") {
+        console.log("Fetch aborted, no need to update state.");
+        return;
+      }
+      setError("Something went wrong. Please try again later.");
+      setResults([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
     console.log("in useEffect");
 
     const timeout = setTimeout(() => {
-      const fetchData = async () => {
-        try {
-          if (!searchQuery && !selectedTag) {
-            setLangs([]);
-            return;
-          }
-
-          setError(null);
-          setLoading(true);
-
-          const queryParams = new URLSearchParams();
-          queryParams.append("no-throttling", "true");
-
-          if (controllerRef.current) {
-            controllerRef.current.abort();
-          }
-
-          controllerRef.current = new AbortController();
-          const signal = controllerRef.current.signal;
-
-          if (searchQuery) queryParams.append("search", searchQuery);
-          if (selectedTag) queryParams.append("tag", selectedTag);
-
-          console.log("query", searchQuery);
-          console.log("tag", selectedTag);
-          console.log("hi", queryParams);
-
-          const response = await fetch(
-            `https://frontend-test-api.digitalcreative.cn/?${queryParams.toString()}`,
-            { signal }
-          );
-
-          if (!response.ok) {
-            setError(`HTTP error! Status: ${response.status}`);
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-
-          const text = await response.text();
-          const data = text ? JSON.parse(text) : [];
-
-          setLangs(data);
-        } catch (err: any) {
-          if (err.name === "AbortError") {
-            console.log("Fetch aborted, no need to update state.");
-            return;
-          }
-          setError("Something went wrong. Please try again later.");
-          setLangs([]);
-        } finally {
-          setLoading(false);
-        }
-      };
-
-      fetchData();
+      fetchData(signal);
     }, 1000);
     return () => {
       console.log("in return");
       clearTimeout(timeout);
-      if (controllerRef.current) {
-        controllerRef.current.abort();
-      }
+      controller.abort();
     };
-  }, [searchQuery, selectedTag]);
+  }, [searchQuery]);
 
   const handleTagSelect = (tag: string) => {
-    if (selectedTag === tag) {
-      setSelectedTag(null);
+    if (searchQuery === tag) {
       setSearchQuery("");
     } else {
-      setSelectedTag(tag);
       setSearchQuery(tag);
     }
   };
@@ -101,7 +88,7 @@ export default function Home() {
   const handleSearchChange = (query: string | null) => {
     setSearchQuery(query);
     if (!query) {
-      setSelectedTag(null);
+      setSearchQuery(null);
     }
   };
 
@@ -111,56 +98,40 @@ export default function Home() {
         <div className="flex flex-col items-center sm:w-[690px] sm:h-[600px] w-[345px] h-[500px] p-[12px] sm:p-[24px] bg-white rounded-t-[20px] shadow-[4px_4px_10px_rgba(0,0,0,0.2)]">
           <div>
             <SearchBar
-              selectedTag={selectedTag}
+              selectedTag={searchQuery}
               onSearchChange={handleSearchChange}
               outline={error}
             />
           </div>
-          {/* <p>{searchQuery}</p> */}
           <div className="my-[20px] sm:w-[642px] w-[321px] flex justify-start space-x-[16px] flex-wrap space-y-[16px] sm:space-y-0">
             <Tab
               tag_text={"Languages"}
-              isSelected={selectedTag === "Languages"}
+              isSelected={searchQuery === "Languages"}
               onSelect={handleTagSelect}
             />
             <Tab
               tag_text={"Build"}
-              isSelected={selectedTag === "Build"}
+              isSelected={searchQuery === "Build"}
               onSelect={handleTagSelect}
             />
             <Tab
               tag_text={"Design"}
-              isSelected={selectedTag === "Design"}
+              isSelected={searchQuery === "Design"}
               onSelect={handleTagSelect}
             />
             <Tab
               tag_text={"Cloud"}
-              isSelected={selectedTag === "Cloud"}
+              isSelected={searchQuery === "Cloud"}
               onSelect={handleTagSelect}
             />
           </div>
           <div className="overflow-y-auto max-h-full w-full flex flex-col items-center">
-            {/* {loading ? (
+            {loading ? (
               <Loading />
             ) : error ? (
               <Message imageURL="/error.svg" />
-            ) : langs && langs.length > 0 ? (
-              langs.map((lang: any) => (
-                <Result
-                  key={lang.title}
-                  title={lang.title}
-                  description={lang.description}
-                  image={lang.image}
-                  url={lang.url}
-                />
-              ))
-            ) : (
-              <Message imageURL="/io.svg" />
-            )} */}
-            {loading && <Loading />}
-            {!loading && error && <Message imageURL="/error.svg" />}
-            {!loading && !error && !!langs ? (
-              langs.map((lang: any) => (
+            ) : results && results.length > 0 ? (
+              results.map((lang: any) => (
                 <Result
                   key={lang.title}
                   title={lang.title}
@@ -172,6 +143,21 @@ export default function Home() {
             ) : (
               <Message imageURL="/io.svg" />
             )}
+            {/* {loading && <Loading />}
+            {!loading && error && <Message imageURL="/error.svg" />}
+            {!loading && !error && !!results ? (
+              results.map((lang: any) => (
+                <Result
+                  key={lang.title}
+                  title={lang.title}
+                  description={lang.description}
+                  image={lang.image}
+                  url={lang.url}
+                />
+              ))
+            ) : (
+              <Message imageURL="/io.svg" />
+            )} */}
           </div>
         </div>
 
@@ -185,8 +171,8 @@ export default function Home() {
               <span className="text-[#ed2e7e]">
                 Something wrong happened but this is not your fault :)
               </span>
-            ) : Array.isArray(langs) && langs.length > 0 ? (
-              `${langs.length} results`
+            ) : Array.isArray(results) && results.length > 0 ? (
+              `${results.length} results`
             ) : (
               "No results"
             )}
