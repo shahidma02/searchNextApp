@@ -1,7 +1,17 @@
 @import "tailwindcss";
 
+/* @theme{
+  --font-poppins : var(--font-poppins)
+} */
+
 :root {
   --color-appPurple: #6833ff;
+  --color-background: #edf2f7;
+  --color-error: #ed2e7e;
+  --color-grey: #999faa;
+  --color-searchGrey: #f2f4f8;
+  --color-arrowGrey: #e0e3e8;
+  --font-poppins: "Poppins", sans-serif;
 }
 
 /* :root {

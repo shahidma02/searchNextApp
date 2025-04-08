@@ -7,16 +7,13 @@ const popins = Poppins({
   subsets: ["latin"],
   weight: "500",
 });
-
-export default function Tab({
-  tag_text,
-  isSelected,
-  onSelect,
-}: {
+interface TabProps {
   tag_text: string;
   isSelected: boolean;
   onSelect: (tag: string) => void;
-}) {
+}
+
+export const Tab: React.FC<TabProps> = ({ tag_text, isSelected, onSelect }) => {
   const toggleSelected = () => {
     onSelect(tag_text);
   };
@@ -24,7 +21,9 @@ export default function Tab({
   return (
     <div
       className={`${
-        isSelected ? "bg-[var(--color-appPurple)]" : "bg-[#f2f4f8]"
+        isSelected
+          ? "bg-[var(--color-appPurple)]"
+          : "bg-[var(--color-searchGrey)]"
       } group h-[32] rounded-[20px] flex justify-center items-center cursor-pointer hover:bg-[#7c52f9] px-[16px]`}
       onClick={toggleSelected}
       tabIndex={0}
@@ -50,4 +49,4 @@ export default function Tab({
       </p>
     </div>
   );
-}
+};

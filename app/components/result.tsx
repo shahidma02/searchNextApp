@@ -9,20 +9,22 @@ const popins = Poppins({
   weight: "400",
 });
 
-export default function Result({
-  title,
-  description,
-  image,
-  url,
-}: {
+interface ResultProps {
   title: string;
   description: string;
   image: string;
   url: string;
-}) {
+}
+
+export const Result: React.FC<ResultProps> = ({
+  title,
+  description,
+  image,
+  url,
+}) => {
   return (
     <Link href={url}>
-      <div className="w-[321px] h-[80px] sm:w-[642px] sm:h-[100px] mb-[10px] rounded-[12px] p-[6px] sm:p-[12px] flex space-x-[10px] sm:space-x-[20px] hover:bg-[#F2F4F8] group">
+      <div className="w-[321px] h-[80px] sm:w-[642px] sm:h-[100px] mb-[10px] rounded-[12px] p-[6px] sm:p-[12px] flex space-x-[10px] sm:space-x-[20px] hover:bg-[var(--color-searchGrey)] group">
         <div className="flex items-center relative sm:w-[76px] sm:h-[76px] w-[60px] h-[60px]">
           <Image
             src={image}
@@ -52,4 +54,4 @@ export default function Result({
       </div>
     </Link>
   );
-}
+};

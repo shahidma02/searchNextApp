@@ -1,6 +1,11 @@
 import Image from "next/image";
+import React from "react";
 
-export default function Message({ imageURL }: { imageURL: string }) {
+interface MessageProps {
+  imageURL: string;
+}
+
+export const Message: React.FC<MessageProps> = ({ imageURL }) => {
   return (
     <div className="h-[207px] sm:h-[414px] flex justify-center items-center">
       <Image
@@ -13,4 +18,4 @@ export default function Message({ imageURL }: { imageURL: string }) {
       />
     </div>
   );
-}
+};
