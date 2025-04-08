@@ -6,6 +6,7 @@ import { Result } from "./components/result";
 import Loading from "./loading";
 import { Message } from "./components/message";
 import { Poppins } from "next/font/google";
+import Link from "next/link";
 
 const popins = Poppins({
   subsets: ["latin"],
@@ -101,6 +102,9 @@ export default function Home() {
 
   return (
     <div className="flex justify-center items-center h-screen bg-[var(--color-background)]">
+      <Link href="/form">
+        <p>Form</p>
+      </Link>
       <div className="flex-col">
         <div className="flex flex-col items-center sm:w-[690px] sm:h-[600px] w-[345px] h-[500px] p-[12px] sm:p-[24px] bg-white rounded-t-[20px] shadow-[4px_4px_10px_rgba(0,0,0,0.2)]">
           <div>
